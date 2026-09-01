@@ -47,3 +47,18 @@ Frontend (TypeScript, CodeMirror) rör aldrig filsystemet direkt — allt går v
 till när något ändrar filerna utanför appen.
 
 Se [CLAUDE.md](CLAUDE.md) för beslut, fallgropar och loggbok.
+
+## Släppa en ny version
+
+```bash
+npm run release -- 0.2.0 "Kort beskrivning av vad som ändrats"
+```
+
+Skriptet höjer versionsnumret, bygger och signerar installeraren, skriver
+`latest.json` och laddar upp allt till GitHub. Installerade appar upptäcker
+uppdateringen nästa gång de startar och frågar om de får installera den.
+
+Utan versionsnummer höjs sista siffran automatiskt: `npm run release`.
+
+**Signeringsnyckeln** ligger i `%USERPROFILE%\.tauri\mdash.key` och ska
+säkerhetskopieras. Utan den kan installerade appar inte längre uppdateras.

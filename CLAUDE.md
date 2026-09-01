@@ -116,3 +116,23 @@ administratör. Bygget tar knappt 5 minuter från rent tillstånd.
 - Ingen mörk variant av papperet än — bara det ljusa.
 - Bilder i anteckningar visas inte inline.
 - Ingen inbyggd uppdateringsfunktion; nya versioner installeras över den gamla.
+
+### 2026-09-01 — Automatiska uppdateringar
+Appen kollar GitHub vid start och frågar innan den installerar något.
+
+- **Endpoint:** `https://github.com/HStenzelius/Mdash/releases/latest/download/latest.json`
+- **Signeringsnyckel:** `%USERPROFILE%\.tauri\mdash.key` (utan lösenord, ligger
+  utanför repot). **Den måste säkerhetskopieras.** Förloras den kan redan
+  installerade appar aldrig uppdateras igen — de vägrar allt som inte är signerat
+  med just den nyckeln, och enda vägen tillbaka är att installera om för hand.
+- **Släpp en version:** `npm run release -- 0.2.0 "Vad som ändrats"`.
+  Skriptet höjer versionsnumret på alla tre ställen (package.json,
+  tauri.conf.json, Cargo.toml), bygger, signerar, skriver `latest.json`,
+  taggar i git och laddar upp till GitHub.
+- **Publikt repo** valdes så att appen slipper bära en åtkomsttoken. En token
+  inbäddad i en exe-fil går att plocka ut av vem som helst som har filen.
+- Uppdateringskollen körs **utan `await`** i `boot()`, före vault-kontrollen.
+  Den ligger medvetet inte i `refreshTree()` — den anropas ofta.
+
+**Viktigt:** version 0.1.0 saknar uppdateraren. Den första versionen med
+uppdateringsstöd måste installeras för hand en gång; därefter sköter appen sig.
