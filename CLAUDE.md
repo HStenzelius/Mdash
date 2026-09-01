@@ -155,3 +155,16 @@ användarens dator märker aldrig av ändringen.
 Välj versionsnummer efter vad som ändrats: sista siffran för rättningar och
 småjusteringar, mittensiffran för nya funktioner. Beskrivningen visas i rutan
 användaren får i appen, så skriv den för en läsare — inte som en commit-rubrik.
+
+### 2026-09-01 — Första släppet med uppdaterare (0.2.0)
+Repo: https://github.com/HStenzelius/Mdash (publikt). Endpoint verifierad:
+både `latest.json` och installeraren går att hämta anonymt.
+
+**Bugg i release-skriptet, rättad:** `spawnSync(cmd, args, { shell: true })`
+limmar ihop argumenten utan citattecken på Windows, så
+`git commit -m "Version 0.2.0"` blev fyra argument och git letade efter en fil
+som hette `0.2.0`. Skriptet bygger nu kommandoraden själv via `quote()`/`line()`.
+Samma fälla gäller överallt i det här projektet där `shell: true` används.
+
+Bygget hann bli klart innan felet slog till, så 0.2.0 publicerades för hand med
+samma artefakter. Nästa `npm run release` går hela vägen av sig själv.
