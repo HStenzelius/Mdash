@@ -136,3 +136,22 @@ Appen kollar GitHub vid start och frågar innan den installerar något.
 
 **Viktigt:** version 0.1.0 saknar uppdateraren. Den första versionen med
 uppdateringsstöd måste installeras för hand en gång; därefter sköter appen sig.
+
+## Arbetssätt
+
+**När användaren säger "commit and push" betyder det: släpp en ny version.**
+
+Kör då:
+
+```bash
+npm run release -- <version> "kort beskrivning av vad som ändrats"
+```
+
+Skriptet sköter resten — commit, tagg, push, bygge, signering och uppladdning
+till GitHub. Gör alltså inte `git commit` och `git push` för hand; då hamnar
+koden på GitHub utan att en installerbar version följer med, och appen på
+användarens dator märker aldrig av ändringen.
+
+Välj versionsnummer efter vad som ändrats: sista siffran för rättningar och
+småjusteringar, mittensiffran för nya funktioner. Beskrivningen visas i rutan
+användaren får i appen, så skriv den för en läsare — inte som en commit-rubrik.
