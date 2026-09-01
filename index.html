@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mdash</title>
+  </head>
+  <body>
+    <div id="app" class="shell">
+      <header class="titlebar" data-tauri-drag-region>
+        <div class="titlebar__left" data-tauri-drag-region>
+          <span class="titlebar__mark">Mdash</span>
+          <span class="titlebar__vault" id="vault-name"></span>
+        </div>
+
+        <button class="omnibar" id="open-search" title="Sök (Ctrl+P)">
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="7" cy="7" r="4.5" />
+            <line x1="10.5" y1="10.5" x2="14" y2="14" />
+          </svg>
+          <span>Sök i anteckningar</span>
+          <kbd>Ctrl P</kbd>
+        </button>
+
+        <div class="window-controls">
+          <button id="win-min" title="Minimera" aria-label="Minimera">
+            <svg viewBox="0 0 12 12"><line x1="2" y1="6" x2="10" y2="6" /></svg>
+          </button>
+          <button id="win-max" title="Maximera" aria-label="Maximera">
+            <svg viewBox="0 0 12 12"><rect x="2.5" y="2.5" width="7" height="7" /></svg>
+          </button>
+          <button id="win-close" class="is-close" title="Stäng" aria-label="Stäng">
+            <svg viewBox="0 0 12 12">
+              <line x1="3" y1="3" x2="9" y2="9" />
+              <line x1="9" y1="3" x2="3" y2="9" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="body">
+        <aside class="sidebar" id="sidebar">
+          <div class="sidebar__scroll" id="sidebar-scroll">
+            <section class="rail" id="rail-tree"></section>
+            <section class="rail" id="rail-tags"></section>
+          </div>
+          <footer class="sidebar__foot">
+            <button id="pick-vault" class="ghost-btn">Byt mapp…</button>
+            <span class="count" id="note-count"></span>
+          </footer>
+        </aside>
+
+        <main class="paper" id="paper">
+          <div class="paper__inner">
+            <div id="editor-host" class="editor-host"></div>
+            <section id="backlinks" class="backlinks" hidden></section>
+          </div>
+        </main>
+      </div>
+
+      <div class="empty" id="empty" hidden>
+        <div class="empty__card">
+          <h1>Välj en mapp att skriva i</h1>
+          <p>
+            Mdash sparar vanliga <code>.md</code>-filer i mappen du väljer.
+            Peka den mot iCloud Drive så synkas anteckningarna av sig själva.
+          </p>
+          <button id="empty-pick" class="primary-btn">Välj mapp…</button>
+          <p class="empty__hint" id="icloud-hint" hidden>
+            Hittade iCloud Drive: <button class="link-btn" id="use-icloud"></button>
+          </p>
+        </div>
+      </div>
+
+      <div class="palette" id="palette" hidden>
+        <div class="palette__box">
+          <input
+            id="palette-input"
+            type="text"
+            placeholder="Sök titlar och innehåll…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <ul id="palette-results" class="palette__results"></ul>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" hidden></div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

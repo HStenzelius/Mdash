@@ -1,0 +1,7 @@
+node_modules/
+dist/
+src-tauri/target/
+*.local
+
+# byggda installerare
+Mdash_*_x64-setup.exe
