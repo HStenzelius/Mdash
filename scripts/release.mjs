@@ -26,23 +26,32 @@ const die = (message) => {
 /** gh ligger inte alltid i PATH i den här processen. */
 function findGh() {
   const fallback = "C:\\Program Files\\GitHub CLI\\gh.exe";
-  const probe = spawnSync("gh", ["--version"], { shell: true });
+  const probe = spawnSync("gh --version", { shell: true });
   if (probe.status === 0) return "gh";
   if (fs.existsSync(fallback)) return fallback;
   die("GitHub CLI (gh) hittades inte. Installera med: winget install GitHub.cli");
 }
 
+/** Citerar ett argument sa att skalet ser det som en enhet. */
+function quote(arg) {
+  return /[s"]/.test(arg) ? `"${String(arg).replace(/"/g, '\\"')}"` : String(arg);
+}
+
+function line(command, args) {
+  return [command, ...args].map(quote).join(" ");
+}
+
 function run(command, args, options = {}) {
-  const result = spawnSync(command, args, {
+  const result = spawnSync(line(command, args), {
     stdio: "inherit",
     shell: true,
     ...options,
   });
-  if (result.status !== 0) die(`Kommandot misslyckades: ${command} ${args.join(" ")}`);
+  if (result.status !== 0) die(`Kommandot misslyckades: ${line(command, args)}`);
 }
 
 function capture(command, args) {
-  const result = spawnSync(command, args, { encoding: "utf8", shell: true });
+  const result = spawnSync(line(command, args), { encoding: "utf8", shell: true });
   return result.status === 0 ? result.stdout.trim() : "";
 }
 
@@ -76,7 +85,7 @@ if (!fs.existsSync(KEY_PATH)) {
 }
 
 const gh = findGh();
-if (capture(gh, ["auth", "status"]) === "" && spawnSync(gh, ["auth", "status"], { shell: true }).status !== 0) {
+if (spawnSync(line(gh, ["auth", "status"]), { shell: true }).status !== 0) {
   die("Du är inte inloggad på GitHub. Kör: gh auth login");
 }
 
@@ -155,13 +164,13 @@ run(gh, [
   "release",
   "create",
   `v${version}`,
-  `"${installer}"`,
-  `"${signature}"`,
-  `"${latestPath}"`,
+  installer,
+  signature,
+  latestPath,
   "--title",
-  `"Mdash ${version}"`,
+  `Mdash ${version}`,
   "--notes",
-  `"${notes}"`,
+  notes,
 ]);
 
 say(
