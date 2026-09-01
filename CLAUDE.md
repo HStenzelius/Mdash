@@ -168,3 +168,29 @@ Samma fälla gäller överallt i det här projektet där `shell: true` används.
 
 Bygget hann bli klart innan felet slog till, så 0.2.0 publicerades för hand med
 samma artefakter. Nästa `npm run release` går hela vägen av sig själv.
+
+### 2026-09-01 — Snabbmeny i skrivytan (0.3.0)
+Högerklick i editorn ger formatering, rubriker, listor, länkar och urklipp.
+`src/ui/menu.ts` är en delad komponent -- sidopanelens egna meny ersattes av den,
+så det finns nu en enda menyimplementation.
+
+Avsteg från förlagan: **"klistra in som oformaterad text" finns inte.** I en
+markdown-editor är all text redan oformaterad, så raden hade gjort exakt samma
+sak som "klistra in". Ersatt med "klistra in som länk", som skapar
+`[markering](url)` när urklippet innehåller en adress.
+
+Detaljer värda att minnas:
+- Menyn och dess undermenyer bor i ett gemensamt `.menu-layer`. Utan det räknas
+  ett klick i en undermeny som ett klick *utanför* menyn, och menyn hinner
+  stängas innan klicket registreras.
+- Kortkommandona ligger **före** `defaultKeymap` i samma `keymap.of([...])`.
+  Annars vinner CodeMirrors egen `Mod-Shift-k` (ta bort rad) över vår.
+- Utan snabbmenyn visade WebView2 sin egen webbläsarmeny ("Spara som",
+  "Skriv ut"). `preventDefault()` i contextmenu-hanteraren tar bort den.
+
+**Fallgrop vid testning:** synteliska musklick via `mouse_event` går till det
+fönster som råkar ligga överst. `SetForegroundWindow` misslyckas ofta i Windows,
+och då hamnar klicket i användarens andra program. Kontrollera alltid att
+`GetForegroundWindow()` är appens fönster innan något klick skickas -- annars
+avbryt. Kör aldrig testinmatning mot en dator användaren arbetar på utan den
+spärren.

@@ -634,31 +634,94 @@ kbd {
 
 /* ------------------------------------------------------------ högerklick */
 
+/* Lagret finns bara för att kunna ta bort meny och undermenyer i ett svep.
+   Det har ingen egen storlek -- menyerna positionerar sig själva. */
+.menu-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
 .menu {
   position: fixed;
-  z-index: 40;
-  min-width: 168px;
+  pointer-events: auto;
+  min-width: 208px;
   padding: 5px;
   display: flex;
   flex-direction: column;
   background: rgba(34, 44, 58, 0.97);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
-  box-shadow: 0 16px 40px rgba(5, 9, 14, 0.45);
+  box-shadow: 0 16px 40px rgba(5, 9, 14, 0.5);
 }
 
-.menu button {
-  text-align: left;
+.menu--sub {
+  min-width: 176px;
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
   padding: 7px 10px;
   border-radius: 6px;
   font-size: 12.5px;
-  transition: background 100ms ease;
+  text-align: left;
+  color: var(--chrome);
+  transition: background 90ms ease;
 }
 
-.menu button:hover {
+.menu__item:hover:not(.is-disabled) {
   background: var(--glass-active);
 }
 
-.menu button.is-danger {
+.menu__item.is-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.menu__item.is-danger {
   color: var(--danger);
+}
+
+/* Ikonrutan reserveras även när ikon saknas, så etiketterna står i linje. */
+.menu__icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.75;
+}
+
+.menu__label {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.menu__shortcut {
+  flex: none;
+  font-size: 11px;
+  color: var(--chrome-soft);
+  opacity: 0.65;
+  letter-spacing: 0.02em;
+}
+
+.menu__arrow {
+  flex: none;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--chrome-soft);
+  opacity: 0.7;
+}
+
+.menu__sep {
+  height: 1px;
+  margin: 5px 8px;
+  background: var(--glass-line);
 }

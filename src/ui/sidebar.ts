@@ -3,6 +3,7 @@
    appen som kan hamna i otakt med filerna. */
 
 import type { TagCount, TreeNode } from "../api";
+import { showMenu } from "./menu";
 
 export interface SidebarHandlers {
   openNote(path: string): void;
@@ -37,7 +38,6 @@ export class Sidebar {
     } catch {
       /* Öppna mappar är en bekvämlighet, inte data. Strunt i om det inte går. */
     }
-    document.addEventListener("click", () => this.closeMenu());
   }
 
   setData(tree: TreeNode[], tags: TagCount[]) {
@@ -251,20 +251,15 @@ export class Sidebar {
 
   // --------------------------------------------------------------- meny
 
-  private menu: HTMLElement | null = null;
-
-  private closeMenu() {
-    this.menu?.remove();
-    this.menu = null;
-  }
-
   private openMenu(x: number, y: number, node: TreeNode) {
-    this.closeMenu();
+    // Åtgärderna gäller mappen man klickade i -- för en anteckning är det
+    // mappen den ligger i.
     const dir = node.isDir ? node.path : node.path.split("/").slice(0, -1).join("/");
 
-    const items: { label: string; run: () => void; danger?: boolean }[] = [
-      { label: "Ny anteckning", run: () => this.handlers.createNote(dir) },
-      { label: "Ny mapp", run: () => this.handlers.createFolder(dir) },
+    showMenu(x, y, [
+      { label: "Ny anteckning", icon: "note", run: () => this.handlers.createNote(dir) },
+      { label: "Ny mapp", icon: "folder", run: () => this.handlers.createFolder(dir) },
+      { kind: "separator" },
       {
         label: "Byt namn",
         run: () => {
@@ -272,27 +267,12 @@ export class Sidebar {
           this.render();
         },
       },
-      { label: "Radera", danger: true, run: () => this.handlers.remove(node.path, node.isDir) },
-    ];
-
-    const menu = document.createElement("div");
-    menu.className = "menu";
-    for (const item of items) {
-      const btn = document.createElement("button");
-      btn.textContent = item.label;
-      if (item.danger) btn.className = "is-danger";
-      btn.addEventListener("click", () => {
-        this.closeMenu();
-        item.run();
-      });
-      menu.append(btn);
-    }
-
-    document.body.append(menu);
-    // Håll menyn innanför fönsterkanten.
-    const rect = menu.getBoundingClientRect();
-    menu.style.left = `${Math.min(x, window.innerWidth - rect.width - 8)}px`;
-    menu.style.top = `${Math.min(y, window.innerHeight - rect.height - 8)}px`;
-    this.menu = menu;
+      {
+        label: "Radera",
+        icon: "trash",
+        danger: true,
+        run: () => this.handlers.remove(node.path, node.isDir),
+      },
+    ]);
   }
 }

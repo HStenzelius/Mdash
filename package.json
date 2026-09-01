@@ -1,7 +1,7 @@
 {
   "name": "mdash",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -21,6 +21,7 @@
     "@lezer/highlight": "^1.2.1",
     "@lezer/markdown": "^1.4.2",
     "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-clipboard-manager": "^2.3.3",
     "@tauri-apps/plugin-dialog": "^2.2.0",
     "@tauri-apps/plugin-opener": "^2.2.5",
     "@tauri-apps/plugin-process": "^2.3.1",

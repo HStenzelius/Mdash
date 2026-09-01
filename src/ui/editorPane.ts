@@ -10,7 +10,15 @@ import { EditorState } from "@codemirror/state";
 import { drawSelection, EditorView, keymap } from "@codemirror/view";
 
 import { api, type Hit } from "../api";
+import {
+  insertExternalLink,
+  insertWikiLink,
+  setHeading,
+  toggleWrap,
+} from "../editor/commands";
 import { livePreview } from "../editor/livePreview";
+import { buildEditorMenu } from "./editorMenu";
+import { showMenu } from "./menu";
 import { paperLook } from "../editor/theme";
 
 const AUTOSAVE_MS = 700;
@@ -67,6 +75,18 @@ export class EditorPane {
               return true;
             },
           },
+          { key: "Mod-b", preventDefault: true, run: (v) => (toggleWrap(v, "**"), true) },
+          { key: "Mod-i", preventDefault: true, run: (v) => (toggleWrap(v, "*"), true) },
+          { key: "Mod-k", preventDefault: true, run: (v) => (insertWikiLink(v), true) },
+          {
+            key: "Mod-Shift-k",
+            preventDefault: true,
+            run: (v) => (insertExternalLink(v), true),
+          },
+          { key: "Mod-0", preventDefault: true, run: (v) => (setHeading(v, 0), true) },
+          { key: "Mod-1", preventDefault: true, run: (v) => (setHeading(v, 1), true) },
+          { key: "Mod-2", preventDefault: true, run: (v) => (setHeading(v, 2), true) },
+          { key: "Mod-3", preventDefault: true, run: (v) => (setHeading(v, 3), true) },
           ...historyKeymap,
           ...defaultKeymap,
         ]),
@@ -76,6 +96,22 @@ export class EditorPane {
           linkExists: this.opts.linkExists,
           onOpenLink: (target) => this.followLink(target),
           onOpenTag: (tag) => this.opts.openTag(tag),
+        }),
+        EditorView.domEventHandlers({
+          contextmenu: (event, view) => {
+            event.preventDefault();
+
+            // Högerklick utanför markeringen flyttar markören dit först,
+            // precis som man är van vid. Klick inuti behåller markeringen.
+            const pos = view.posAtCoords({ x: event.clientX, y: event.clientY });
+            const selection = view.state.selection.main;
+            if (pos !== null && (pos < selection.from || pos > selection.to)) {
+              view.dispatch({ selection: { anchor: pos } });
+            }
+
+            showMenu(event.clientX, event.clientY, buildEditorMenu(view));
+            return true;
+          },
         }),
         EditorView.updateListener.of((update) => {
           if (update.docChanged && !this.loading) this.touch();
